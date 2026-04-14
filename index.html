@@ -374,17 +374,17 @@ Put it in the Default folder.</code></pre>
     <div class="step-num">3</div>
     <h2>Write the invocation script</h2>
   </div>
-  <p class="step-desc">Generate a Python script that sends 10 diverse research questions to the agent.</p>
+  <p class="step-desc">Generate a script that sends 10 diverse research questions to the agent via the REST API.</p>
   <span class="badge badge-prompt">prompt</span>
   <div class="code-block">
     <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
-    <pre><code>Write a Python script called invoke_agent.py that invokes
+    <pre><code>Write a shell script called invoke_agent.sh that invokes
 "my-research-assistant" with 10 diverse research questions.
 Include: single company query, comparison, current events,
 edge case (niche/ambiguous), multi-part question.
-Print query, response time, token count, and response preview.
+Print query, response time, and response preview.
 
-Use direct API calls (no SDK needed), like this:
+Use direct API calls like this:
 
 curl --request POST \
  --url 'https://my.orq.ai/v2/agents/my-research-assistant/responses' \
@@ -410,7 +410,7 @@ curl --request POST \
   <span class="badge badge-terminal">terminal</span>
   <div class="code-block">
     <div class="code-bar"><span class="code-bar-label">Shell</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
-    <pre><code><span class="kw">python3</span> invoke_agent.py</code></pre>
+    <pre><code><span class="kw">bash</span> invoke_agent.sh</code></pre>
   </div>
 </div>
 
