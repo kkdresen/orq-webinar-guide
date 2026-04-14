@@ -384,18 +384,12 @@ than generic summaries."</code></pre>
   <span class="badge badge-prompt">prompt</span>
   <div class="code-block">
     <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
-    <pre><code>Write invoke_agent.sh — a bash script that sends 10 diverse research
-questions to "my-research-assistant" via direct curl calls. Include:
-single company, comparison, current events, niche edge case, multi-part.
-Print label, question, response time, tokens, and a response preview.
+    <pre><code>Write invoke_agent.py (Python, stdlib only) that dispatches 10 diverse
+research questions to my orq.ai agent my-research-assistant in parallel
+— one thread per question, all fired at once. Just print status and
+response time per query, and total wall-clock at the end.
 
-API pattern to use:
-  POST https://my.orq.ai/v2/agents/my-research-assistant/responses
-  Header: "Authorization: Bearer $ORQ_API_KEY"
-  Body: {"message":{"role":"user","parts":[{"kind":"text","text":"..."}]}}
-
-No SDK or pip install — just curl and bash.
-Docs: https://docs.orq.ai/docs/agents/agent-api#execute-the-agent-2</code></pre>
+API reference: https://docs.orq.ai/docs/agents/agent-api</code></pre>
   </div>
 </div>
 
@@ -409,7 +403,7 @@ Docs: https://docs.orq.ai/docs/agents/agent-api#execute-the-agent-2</code></pre>
   <span class="badge badge-terminal">terminal</span>
   <div class="code-block">
     <div class="code-bar"><span class="code-bar-label">Shell</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
-    <pre><code><span class="kw">bash</span> invoke_agent.sh</code></pre>
+    <pre><code><span class="kw">python3</span> invoke_agent.py</code></pre>
   </div>
 </div>
 
