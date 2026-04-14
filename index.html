@@ -378,25 +378,17 @@ Put it in the Default folder.</code></pre>
   <span class="badge badge-prompt">prompt</span>
   <div class="code-block">
     <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
-    <pre><code>Write a shell script called invoke_agent.sh that invokes
-"my-research-assistant" with 10 diverse research questions.
-Include: single company query, comparison, current events,
-edge case (niche/ambiguous), multi-part question.
-Print query, response time, and response preview.
+    <pre><code>Write invoke_agent.sh — a bash script that sends 10 diverse research
+questions to "my-research-assistant" via direct curl calls. Include:
+single company, comparison, current events, niche edge case, multi-part.
+Print label, question, response time, tokens, and a response preview.
 
-Use direct API calls like this:
+API pattern to use:
+  POST https://my.orq.ai/v2/agents/my-research-assistant/responses
+  Header: "Authorization: Bearer $ORQ_API_KEY"
+  Body: {"message":{"role":"user","parts":[{"kind":"text","text":"..."}]}}
 
-curl --request POST \
- --url 'https://my.orq.ai/v2/agents/my-research-assistant/responses' \
- --header "Authorization: Bearer $ORQ_API_KEY" \
- --header 'Content-Type: application/json' \
- --data '{
-    "message": {
-      "role": "user",
-      "parts": [
-        { "kind": "text", "text": "your question here" }
-      ]
-    }}'</code></pre>
+No SDK or pip install — just curl and bash.</code></pre>
   </div>
 </div>
 
