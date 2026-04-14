@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>orq.ai + Claude Code — Build, Evaluate & Ship AI Agents</title>
+<link rel="icon" href="https://framerusercontent.com/images/LNgdjkOKmJbEFGij0EjEPHDLI.svg">
+<style>
+  @font-face { font-family: "ES Klarheit Kurrent"; src: url("https://framerusercontent.com/assets/ZDHlRDWjrhK4DaZU0bgWtsTQBM.woff2"); font-display: swap; font-weight: 400; }
+  @font-face { font-family: "ES Klarheit Kurrent"; src: url("https://framerusercontent.com/assets/HiovZWjG27S5NQhE8dyeECDMc.woff2"); font-display: swap; font-weight: 600; }
+  @font-face { font-family: "ES Klarheit Mono"; src: url("https://framerusercontent.com/assets/uTpeqFhO1uSBMebce7VUZqSIXI.woff2"); font-display: swap; font-weight: 500; }
+
+  :root {
+    --bg: #FBF7F5;
+    --surface: #F2EEEC;
+    --surface-2: #EAE6E2;
+    --border: #DDD7D2;
+    --text: #161616;
+    --text-secondary: #5D5957;
+    --text-muted: #87827E;
+    --accent: #DF5425;
+    --accent-light: #FF8F36;
+    --accent-bg: rgba(223, 84, 37, 0.08);
+    --teal: #025558;
+    --teal-light: #03FFDC;
+    --teal-bg: #00342D;
+    --green: #22C55E;
+    --red: #DC2626;
+    --yellow: #F59E0B;
+    --terminal-bg: #141318;
+    --terminal-surface: #1E1D23;
+    --terminal-border: #2E2D32;
+    --terminal-text: #E5E5E5;
+    --terminal-muted: #737373;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "ES Klarheit Kurrent", -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  header {
+    padding: 48px 0 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .logo-orq {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+  .logo-sep { color: var(--text-muted); font-size: 24px; font-weight: 300; }
+  .logo-claude { color: var(--text-secondary); font-size: 20px; font-weight: 400; }
+  header h1 {
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  header p { color: var(--text-secondary); font-size: 16px; max-width: 640px; }
+
+  /* The Loop */
+  .loop-section {
+    padding: 40px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .loop-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .loop-flow {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .loop-node {
+    background: var(--terminal-bg);
+    color: var(--terminal-text);
+    font-family: "ES Klarheit Mono", monospace;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: 8px;
+    white-space: nowrap;
+    position: relative;
+  }
+  .loop-node-label {
+    display: block;
+    font-family: "ES Klarheit Kurrent", sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--terminal-muted);
+    margin-top: 2px;
+  }
+  .loop-arrow {
+    color: var(--accent);
+    font-size: 20px;
+    padding: 0 10px;
+    flex-shrink: 0;
+  }
+  .loop-wrap {
+    position: relative;
+    display: inline-block;
+  }
+  .loop-return-svg {
+    display: block;
+    margin-top: 6px;
+    overflow: visible;
+  }
+  .loop-note {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* Steps */
+  .step {
+    padding: 40px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: none; }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    background: var(--text);
+    color: #fff;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .step h2 { font-size: 20px; font-weight: 600; }
+  .step-desc {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 16px;
+    padding-left: 46px;
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    font-family: "ES Klarheit Mono", monospace;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .badge-terminal { background: #161616; color: #A3A3A3; }
+  .badge-prompt { background: var(--accent-bg); color: var(--accent); }
+  .badge-slash { background: rgba(2, 85, 88, 0.08); color: var(--teal); }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--terminal-bg);
+    border: 1px solid var(--terminal-border);
+    border-radius: 10px;
+    margin: 8px 0 16px;
+    margin-left: 46px;
+    overflow: hidden;
+  }
+  .code-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: var(--terminal-surface);
+    border-bottom: 1px solid var(--terminal-border);
+  }
+  .code-bar-label {
+    font-family: "ES Klarheit Mono", monospace;
+    font-size: 12px;
+    color: var(--terminal-muted);
+    font-weight: 500;
+  }
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--terminal-border);
+    border-radius: 4px;
+    color: var(--terminal-muted);
+    font-family: "ES Klarheit Mono", monospace;
+    font-size: 11px;
+    padding: 2px 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { color: var(--terminal-text); border-color: var(--accent); }
+  .code-block pre {
+    padding: 16px;
+    overflow-x: auto;
+    font-family: "ES Klarheit Mono", 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--terminal-text);
+  }
+  .code-block code { color: inherit; }
+
+  /* Syntax */
+  .kw { color: var(--accent-light); }
+  .str { color: var(--teal-light); }
+  .cmd { color: #A3A3A3; }
+
+  /* Results */
+  .result-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 8px 0 16px;
+    margin-left: 46px;
+    font-size: 13px;
+  }
+  .result-box table { width: 100%; border-collapse: collapse; }
+  .result-box th {
+    text-align: left;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .result-box td { padding: 6px 0; font-family: "ES Klarheit Mono", monospace; font-size: 12px; }
+  .val-pass { color: #16A34A; }
+  .val-fail { color: #DC2626; }
+  .val-warn { color: #D97706; }
+
+  /* Footer */
+  footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    header h1 { font-size: 24px; }
+    .code-block, .result-box, .step-desc { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<header>
+  <div class="logo-row">
+    <span class="logo-orq">orq.ai</span>
+    <span class="logo-sep">&times;</span>
+    <span class="logo-claude">Claude Code</span>
+  </div>
+  <h1>Build, Evaluate &amp; Ship AI Agents</h1>
+  <p>End-to-end workflow: create an agent, analyze traces, build evaluators, validate with experiments, and ship to production &mdash; all from the terminal.</p>
+</header>
+
+
+<!-- STEP 0 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">0</div>
+    <h2>Connect Claude Code to orq.ai</h2>
+  </div>
+  <p class="step-desc">Install Claude Code, wire up the orq.ai MCP server, and load the skills plugin.</p>
+  <span class="badge badge-terminal">terminal</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Shell &mdash; Fresh install</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code><span class="cmd"># Install Claude Code</span>
+<span class="kw">npm</span> install -g @anthropic-ai/claude-code
+
+<span class="cmd"># Set your orq.ai API key</span>
+<span class="kw">export</span> ORQ_API_KEY=<span class="str">"sk-orq-REPLACE_WITH_REAL_KEY"</span>
+
+<span class="cmd"># Add the orq.ai MCP server</span>
+<span class="kw">claude</span> mcp add --transport http orq https://my.orq.ai/v2/mcp \
+  --header <span class="str">"Authorization: Bearer ${ORQ_API_KEY}"</span>
+
+<span class="cmd"># Install orq.ai skills plugin</span>
+<span class="kw">claude</span> plugin install orq-skills@orq-claude-plugin
+
+<span class="cmd"># Launch Claude Code</span>
+<span class="kw">claude</span></code></pre>
+  </div>
+</div>
+
+<!-- STEP 1 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">1</div>
+    <h2>Workspace overview</h2>
+  </div>
+  <p class="step-desc">See what's already in your orq.ai workspace.</p>
+  <span class="badge badge-slash">slash command</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code>/orq:workspace</code></pre>
+  </div>
+</div>
+
+<!-- STEP 1.5 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num" style="font-size: 11px;">1.5</div>
+    <h2>Enable models in AI Router</h2>
+  </div>
+  <p class="step-desc">New users: go to <strong>AI Studio &rarr; AI Router</strong> and toggle on the models you need (e.g. Claude Sonnet 4.5, GPT-5.4-mini). Agents and experiments can only use models that are enabled here.</p>
+  <div class="result-box" style="margin-left: 46px;">
+    <table>
+      <tr><th>Where</th><th>Action</th></tr>
+      <tr><td><a href="https://my.orq.ai" style="color: var(--accent); text-decoration: none;">my.orq.ai</a> &rarr; AI Studio &rarr; AI Router</td><td>Toggle on required models</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">2</div>
+    <h2>Build the agent</h2>
+  </div>
+  <p class="step-desc">Create a research assistant with web search and current date tools.</p>
+  <span class="badge badge-prompt">prompt</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code>Build a single agent called "my-research-assistant" with the following setup:
+- Model: claude-sonnet-4-5
+- Tools: Web Search, Current Date
+- Instructions: "You are a research assistant. When asked about a topic,
+  use web search to find current, specific information. Always include
+  source URLs in your response. Be specific — include names, numbers,
+  and dates rather than generic summaries."
+Put it in the webinar single agent folder in the webinar project.</code></pre>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">3</div>
+    <h2>Write the invocation script</h2>
+  </div>
+  <p class="step-desc">Generate a Python script that sends 10 diverse research questions to the agent.</p>
+  <span class="badge badge-prompt">prompt</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code>Write a Python script called invoke_agent.py that uses the orq.ai
+REST API to invoke "my-research-assistant" with 10 diverse research
+questions. Include: single company query, comparison, current events,
+edge case (niche/ambiguous), multi-part question.
+Print query, response time, token count, and response preview.
+Use ORQ_API_KEY and ORQ_SERVER_URL from environment.</code></pre>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">4</div>
+    <h2>Invoke the agent</h2>
+  </div>
+  <p class="step-desc">Run the script to generate traces.</p>
+  <span class="badge badge-terminal">terminal</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Shell</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code><span class="kw">python3</span> invoke_agent.py</code></pre>
+  </div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">5</div>
+    <h2>Analyze traces &amp; build failure taxonomy</h2>
+  </div>
+  <p class="step-desc">Read recent traces, identify failure modes, quantify, and prioritize.</p>
+  <span class="badge badge-prompt">prompt</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code>Analyze recent trace failures and quality issues for my-research-assistant.
+Read recent traces, inspect outputs, and build a failure taxonomy.
+What is working, what is failing, and how often?</code></pre>
+  </div>
+  <div class="result-box">
+    <table>
+      <tr><th>Expected outcome</th><th></th></tr>
+      <tr><td>Failure taxonomy with rates</td><td><span class="val-pass">per-mode error %</span></td></tr>
+      <tr><td>Transition failure matrix</td><td><span class="val-pass">stage-by-stage</span></td></tr>
+      <tr><td>Prioritized recommendations</td><td><span class="val-pass">P0 / P1 / P2</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- STEP 6 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">6</div>
+    <h2>Build evaluator from dominant failure mode</h2>
+  </div>
+  <p class="step-desc">Identify the #1 failure pattern and create a targeted LLM-as-a-judge evaluator.</p>
+  <span class="badge badge-prompt">prompt</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code>Analyze recent trace failures, identify the single highest-frequency
+and highest-impact failure mode, then build one LLM-as-a-judge
+evaluator specifically for that mode.
+- Do not pre-commit to an evaluator name.
+- Derive the name dynamically from the dominant failure pattern.
+- Evaluator must be broadly applicable across any agent/workspace.
+- Model: gpt-5.4-mini.</code></pre>
+  </div>
+</div>
+
+<!-- STEP 7 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">7</div>
+    <h2>Create validation dataset</h2>
+  </div>
+  <p class="step-desc">Generate a complex, ambiguous dataset to stress-test the evaluator.</p>
+  <span class="badge badge-slash">slash command</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code>/orq:generate-synthetic-dataset
+Create "evaluator-validation" — 24 rows, 12 PASS / 12 FAIL.
+Structure: inputs.query, inputs.response, expected_output ("PASS"/"FAIL").
+PASS = specific (entities, numbers, dates, sources, tradeoffs).
+FAIL = generic/vague (capability-listing, no evidence, no sources).
+Make it complex: borderline cases, confident-sounding but weak responses.
+Topics: policy, finance, travel, SaaS comparisons, infra/tooling.</code></pre>
+  </div>
+</div>
+
+<!-- STEP 8 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">8</div>
+    <h2>Run baseline experiment</h2>
+  </div>
+  <p class="step-desc">Test the evaluator prompt against the dataset.</p>
+  <span class="badge badge-slash">slash command</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code>/orq:run-experiment
+Experiment "evaluator-validation-depth" on dataset "evaluator-validation".
+One task column, model openai/gpt-5.4-mini.
+Instructions: binary PASS/FAIL on response depth — PASS if specific+sourced,
+FAIL if vague. Input: "Query: {{query}}\nResponse: {{response}}\nReply PASS
+or FAIL only." Evaluate against expected_output with exact-match.</code></pre>
+  </div>
+</div>
+
+<!-- STEP 9 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">9</div>
+    <h2>Analyze experiment results</h2>
+  </div>
+  <p class="step-desc">Compute accuracy, confusion matrix, and diagnose mismatches.</p>
+  <span class="badge badge-prompt">prompt</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code>Analyze the experiment run: accuracy, confusion matrix (TP/FN/TN/FP),
+TPR, TNR. Show per-row breakdown. Inspect all mismatches — what's the
+root cause?</code></pre>
+  </div>
+  <div class="result-box">
+    <table>
+      <tr><th>Metric</th><th>Baseline</th></tr>
+      <tr><td>Accuracy</td><td><span class="val-warn">79.2%</span></td></tr>
+      <tr><td>TPR (sensitivity)</td><td><span class="val-fail">58.3%</span></td></tr>
+      <tr><td>TNR (specificity)</td><td><span class="val-pass">100.0%</span></td></tr>
+      <tr><td>Root cause</td><td><span class="val-warn">Too strict on long, detailed PASS responses</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- STEP 10 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">10</div>
+    <h2>Improve prompt &amp; re-run side by side</h2>
+  </div>
+  <p class="step-desc">Add a second task column with an improved prompt and compare.</p>
+  <span class="badge badge-prompt">prompt</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code>Add a second task column with an improved prompt (few-shot examples,
+length-is-not-a-penalty rule, sharper FAIL definition). Keep gpt-5.4-mini.
+Re-run both columns side by side over the same dataset. Show accuracy,
+TPR, TNR, fixes, and regressions.</code></pre>
+  </div>
+  <div class="result-box">
+    <table>
+      <tr><th>Metric</th><th>Original</th><th>Improved</th><th>Delta</th></tr>
+      <tr><td>Accuracy</td><td><span class="val-warn">75.0%</span></td><td><span class="val-pass">100.0%</span></td><td><span class="val-pass">+25pp</span></td></tr>
+      <tr><td>TPR</td><td><span class="val-fail">50.0%</span></td><td><span class="val-pass">100.0%</span></td><td><span class="val-pass">+50pp</span></td></tr>
+      <tr><td>TNR</td><td><span class="val-pass">100.0%</span></td><td><span class="val-pass">100.0%</span></td><td>=</td></tr>
+      <tr><td>Fixes</td><td colspan="3"><span class="val-pass">+6 corrected, 0 regressions</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- STEP 11 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">11</div>
+    <h2>Create evaluator &amp; attach to agent</h2>
+  </div>
+  <p class="step-desc">Productionize the winning evaluator prompt and wire it to the agent.</p>
+  <span class="badge badge-prompt">prompt</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code>Create an LLM evaluator from the winning column's prompt. Attach it
+to "my-research-assistant" on output at 100% sample rate.</code></pre>
+  </div>
+</div>
+
+<!-- STEP 12 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">12</div>
+    <h2>Human annotation &amp; alignment check</h2>
+  </div>
+  <p class="step-desc">Validate evaluator accuracy against human judgment.</p>
+  <span class="badge badge-prompt">prompt</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code>Export the run with the eval_check human annotation column. Show
+annotated vs pending, agreement rates, and flag any human-vs-expected
+disagreements.</code></pre>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+  <div class="container">
+    <p style="margin-bottom: 8px;">
+      <strong style="color: var(--text);">orq.ai</strong> &mdash; LLMOps platform for building, evaluating, and shipping AI agents
+    </p>
+    <p>
+      <a href="https://docs.orq.ai">docs.orq.ai</a> &nbsp;&middot;&nbsp;
+      <a href="https://my.orq.ai">my.orq.ai</a> &nbsp;&middot;&nbsp;
+      <a href="https://github.com/anthropics/claude-code">Claude Code</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+function copyBlock(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+  });
+}
+</script>
+
+</body>
+</html>
