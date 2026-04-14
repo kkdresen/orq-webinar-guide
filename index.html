@@ -384,24 +384,19 @@ Include: single company query, comparison, current events,
 edge case (niche/ambiguous), multi-part question.
 Print query, response time, token count, and response preview.
 
-Use the orq-ai-sdk like this:
+Use direct API calls (no SDK needed), like this:
 
-from orq_ai_sdk import Orq
-
-client = Orq(
-    api_key=os.environ.get("ORQ_API_KEY"),
-    server_url="https://my.orq.ai"
-)
-
-response = client.agents.responses.create(
-    agent_key="my-research-assistant",
-    message={
-        "role": "user",
-        "parts": [{"kind": "text", "text": "your question here"}]
-    })
-
-print(response.output[0].parts[0].text)
-print(response.usage)</code></pre>
+curl --request POST \
+ --url 'https://my.orq.ai/v2/agents/my-research-assistant/responses' \
+ --header 'Authorization: Bearer $ORQ_API_KEY' \
+ --header 'Content-Type: application/json' \
+ --data '{
+    "message": {
+      "role": "user",
+      "parts": [
+        { "kind": "text", "text": "your question here" }
+      ]
+    }}'</code></pre>
   </div>
 </div>
 
