@@ -357,14 +357,20 @@
   <span class="badge badge-prompt">prompt</span>
   <div class="code-block">
     <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
-    <pre><code>Build a single agent called "my-research-assistant" with the following setup:
-- Model: claude-sonnet-4-5
-- Tools: Web Search, Current Date
-- Instructions: "You are a research assistant. When asked about a topic,
-  use web search to find current, specific information. Always include
-  source URLs in your response. Be specific — include names, numbers,
-  and dates rather than generic summaries."
-Put it in the Default folder.</code></pre>
+    <pre><code>Build a single agent called my-research-assistant in the Default project,
+inside a folder called single-agent.
+Run it on Anthropic's Claude Sonnet 4.5, resolve that against the
+orq.ai model catalog.
+
+Attach two built-in tools: Web Search and Current Date. Web Search lets
+it pull live information, and Current Date anchors "current" to today's
+actual date rather than the model's training cutoff.
+
+Use these instructions verbatim:
+"You are a research assistant. When asked about a topic, use web search
+to find current, specific information. Always include source URLs in
+your response. Be specific — include names, numbers, and dates rather
+than generic summaries."</code></pre>
   </div>
 </div>
 
