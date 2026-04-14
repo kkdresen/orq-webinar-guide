@@ -536,21 +536,6 @@ TPR, TNR, fixes, and regressions.</code></pre>
 <div class="step">
   <div class="step-header">
     <div class="step-num">11</div>
-    <h2>Create evaluator &amp; attach to agent</h2>
-  </div>
-  <p class="step-desc">Productionize the winning evaluator prompt and wire it to the agent.</p>
-  <span class="badge badge-prompt">prompt</span>
-  <div class="code-block">
-    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
-    <pre><code>Create an LLM evaluator from the winning column's prompt. Attach it
-to "my-research-assistant" on output at 100% sample rate.</code></pre>
-  </div>
-</div>
-
-<!-- STEP 12 -->
-<div class="step">
-  <div class="step-header">
-    <div class="step-num">12</div>
     <h2>Human annotation &amp; alignment check</h2>
   </div>
   <p class="step-desc">Validate evaluator accuracy against human judgment.</p>
@@ -560,6 +545,21 @@ to "my-research-assistant" on output at 100% sample rate.</code></pre>
     <pre><code>Export the run with the eval_check human annotation column. Show
 annotated vs pending, agreement rates, and flag any human-vs-expected
 disagreements.</code></pre>
+  </div>
+</div>
+
+<!-- STEP 12 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">12</div>
+    <h2>Create evaluator &amp; attach to agent</h2>
+  </div>
+  <p class="step-desc">Productionize the winning evaluator prompt and wire it to the agent.</p>
+  <span class="badge badge-prompt">prompt</span>
+  <div class="code-block">
+    <div class="code-bar"><span class="code-bar-label">Claude Code</span><button class="copy-btn" onclick="copyBlock(this)">Copy</button></div>
+    <pre><code>Create an LLM evaluator from the winning column's prompt. Attach it
+to "my-research-assistant" on output at 100% sample rate.</code></pre>
   </div>
 </div>
 
