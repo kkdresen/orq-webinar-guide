@@ -310,7 +310,8 @@
 <span class="kw">claude</span> mcp add --transport http orq https://my.orq.ai/v2/mcp \
  --header <span class="str">"Authorization: Bearer ${ORQ_API_KEY}"</span>
 
-<span class="cmd"># Install orq.ai skills plugin</span>
+<span class="cmd"># Installs skills, commands, agents, and the MCP server in one step</span>
+<span class="kw">claude</span> plugin marketplace add orq-ai/claude-plugins
 <span class="kw">claude</span> plugin install orq-skills@orq-claude-plugin
 
 <span class="cmd"># Launch Claude Code</span>
